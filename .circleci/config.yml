@@ -14,11 +14,11 @@ jobs:
     - checkout
     - node/install-packages:
         pkg-manager: yarn
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
+    # - store_artifacts:
+    #     path: /tmp/test-results
+    #     destination: raw-test-output
+    # - store_test_results:
+    #     path: /tmp/test-results
 workflows:
   node-tests:
     jobs:
