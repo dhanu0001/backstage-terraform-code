@@ -1,4 +1,4 @@
-resource "aws_ecs_cluster" "default_cluster" {
+resource "aws_ecs_cluster" "bakstage-fargate-cluster" {
   name = "${var.project}-cluster"
   setting {
     name  = "containerInsights"
@@ -49,8 +49,8 @@ resource "aws_ecs_task_definition" "default_task" {
    }
    portMappings = [{
     protocol      = "tcp"
-    containerPort = 7000
-    hostPort      = 7000
+    containerPort = 7007
+    hostPort      = 7007
    }]
   }])
   tags = {
@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "default_task" {
 
 resource "aws_ecs_service" "default_service" {
   name                               = "${var.project}-service"
-  cluster                            = aws_ecs_cluster.default_cluster.id
+  cluster                            = aws_ecs_cluster.bakstage-fargate-cluster.id
   task_definition                    = aws_ecs_task_definition.default_task.arn
   launch_type                        = "FARGATE"
   platform_version                   = "1.4.0"
@@ -79,6 +79,6 @@ resource "aws_ecs_service" "default_service" {
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = "${var.project}-container"
-    container_port   = 7000
+    container_port   = 7007
   }
 }

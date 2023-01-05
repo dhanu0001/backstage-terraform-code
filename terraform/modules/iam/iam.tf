@@ -1,5 +1,5 @@
-resource "aws_iam_policy" "ssm_policy" {
-  name        = "${var.project}-ssm-policy"
+resource "aws_iam_policy" "ssm_policy1" {
+  name        = "${var.project}-ssm-policy1"
   path        = "/"
   description = "Access to Parameter Store variables"
   policy      = jsonencode({
@@ -16,8 +16,8 @@ resource "aws_iam_policy" "ssm_policy" {
   })
 }
 
-resource "aws_iam_policy" "logs_policy" {
-  name        = "${var.project}-logs-policy"
+resource "aws_iam_policy" "logs_policy1" {
+  name        = "${var.project}-logs-policy1"
   path        = "/"
   description = "Access to Cloudwatch"
   policy      = jsonencode({
@@ -39,8 +39,8 @@ resource "aws_iam_policy" "logs_policy" {
   })
 }
 
-resource "aws_iam_policy" "ecr_policy" {
-  name        = "${var.project}-ecr-policy"
+resource "aws_iam_policy" "ecr_policy1" {
+  name        = "${var.project}-ecr-policy1"
   path        = "/"
   description = "Access to ECR"
   policy      = jsonencode({
@@ -60,7 +60,7 @@ resource "aws_iam_policy" "ecr_policy" {
   })
 }
 
-data "aws_iam_policy_document" "ecs_tasks_execution_role" {
+data "aws_iam_policy_document" "ecs_tasks_execution_role1" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
@@ -72,20 +72,20 @@ data "aws_iam_policy_document" "ecs_tasks_execution_role" {
 
 resource "aws_iam_role" "backstage_role" {
   name               = "${var.project}-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_tasks_execution_role.json
+  assume_role_policy = data.aws_iam_policy_document.ecs_tasks_execution_role1.json
 }
 
-resource "aws_iam_role_policy_attachment" "backstage-ssm-policy-attach" {
+resource "aws_iam_role_policy_attachment" "backstage-ssm-policy1-attach" {
   role       = aws_iam_role.backstage_role.name
-  policy_arn = aws_iam_policy.ssm_policy.arn
+  policy_arn = aws_iam_policy.ssm_policy1.arn
 }
 
-resource "aws_iam_role_policy_attachment" "backstage-logs-policy-attach" {
+resource "aws_iam_role_policy_attachment" "backstage-logs-policy1-attach" {
   role       = aws_iam_role.backstage_role.name
-  policy_arn = aws_iam_policy.logs_policy.arn
+  policy_arn = aws_iam_policy.logs_policy1.arn
 }
 
-resource "aws_iam_role_policy_attachment" "backstage-ecr-policy-attach" {
+resource "aws_iam_role_policy_attachment" "backstage-ecr-policy1-attach" {
   role       = aws_iam_role.backstage_role.name
-  policy_arn = aws_iam_policy.ecr_policy.arn
+  policy_arn = aws_iam_policy.ecr_policy1.arn
 }

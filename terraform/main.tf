@@ -10,11 +10,11 @@ module "aws_vpc" {
 
 ### ALB
 module "aws_alb" {
-  source             = "./modules/alb"
-  project            = var.project
-  vpc_id             = module.aws_vpc.vpc_id
-  subnet_ids         = values(module.aws_vpc.public_subnets)
-  depends_on         = [module.aws_vpc]
+  source     = "./modules/alb"
+  project    = var.project
+  vpc_id     = module.aws_vpc.vpc_id
+  subnet_ids = values(module.aws_vpc.public_subnets)
+  depends_on = [module.aws_vpc]
 }
 
 ### RDS

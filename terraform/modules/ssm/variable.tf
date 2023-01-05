@@ -1,21 +1,8 @@
-# Variables
-variable default_region { 
-  type = string 
-}
-
-variable project { 
-  type = string 
-}
-
-variable vpc_cidr_block {
+variable project {
   type = string
 }
 
-variable public_subnets {
-  type = map
-}
-
-variable docker_image_tag {
+variable postgres_host {
   type = string
 }
 

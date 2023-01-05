@@ -1,76 +1,47 @@
-# Stage 1 - Create yarn install skeleton layer
-FROM node:14-buster-slim AS packages
+# This dockerfile builds an image for the backend package.
+# It should be executed with the root of the repo as docker context.
+#
+# Before building this image, be sure to have run the following commands in the repo root:
+#
+# yarn install
+# yarn tsc
+# yarn build:backend
+#
+# Once the commands have been run, you can build the image using `yarn build-image`
 
-WORKDIR /usr/src/app
+FROM --platform=linux/amd64 node:16-bullseye-slim
 
-COPY package.json yarn.lock ./
+# Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
+# in which case you should also move better-sqlite3 to "devDependencies" in package.json.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libsqlite3-dev python3 build-essential && \
+    yarn config set python /usr/bin/python3
 
-# COPY plugins
-COPY packages packages
+# From here on we use the least-privileged `node` user to run the backend.
+USER node
 
-RUN find packages \! -name "package.json" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
+# This should create the app dir as `node`.
+# If it is instead created as `root` then the `tar` command below will fail: `can't create directory 'packages/': Permission denied`.
+# If this occurs, then ensure BuildKit is enabled (`DOCKER_BUILDKIT=1`) so the app dir is correctly created as `node`.
+WORKDIR /app
 
-# Stage 2 - Install dependencies and build packages
-FROM node:14-buster-slim AS build
+# This switches many Node.js dependencies to production mode.
+ENV NODE_ENV production
 
-WORKDIR /usr/src/app
-COPY --from=packages /usr/src/app .
-
-RUN yarn install --network-timeout 600000 && rm -rf "$(yarn cache dir)"
-
-COPY . .
-
-COPY app-config.yaml ./
-
-RUN yarn tsc
-RUN yarn --cwd packages/backend backstage-cli backend:bundle --build-dependencies
-
-# Stage 3 - Build the actual backend image and install production dependencies
-FROM node:14-alpine3.13
-
-ENV NPM_VERSION=6.14.12
-ARG NPM_REGISTRY="https://registry.npmjs.org"
-
-WORKDIR /usr/src/app
-
-# Fix openjdk-11-jdk-headless error
-RUN mkdir -p /usr/share/man/man1
-
-# Install cookiecutter
-RUN apk add --no-cache python3 python3-dev py3-pip py3-matplotlib py3-wheel g++ \
-    gcc musl-dev openjdk11-jre-headless curl graphviz ttf-dejavu fontconfig
-
-# Download plantuml file, Validate checksum & Move plantuml file
-RUN curl -o plantuml.jar -L http://sourceforge.net/projects/plantuml/files/plantuml.1.2021.4.jar/download \ 
-    && echo "be498123d20eaea95a94b174d770ef94adfdca18  plantuml.jar" | sha1sum -c - && mv plantuml.jar /opt/plantuml.jar
-
-# Install cookiecutter and mkdocs
-RUN pip3 install cookiecutter && pip3 install mkdocs-techdocs-core==0.0.16
-
-RUN apk del curl
-
-# Create script to call plantuml.jar from a location in path
-RUN echo $'#!/bin/sh\n\njava -jar '/opt/plantuml.jar' ${@}' >> /usr/local/bin/plantuml
-RUN chmod 755 /usr/local/bin/plantuml
-
-# Install dependencies and update npm
-RUN npm config set registry ${NPM_REGISTRY} \
-    && npm config set strict-ssl false  \
-    && yarn config set registry ${NPM_REGISTRY} \
-    && yarn config set strict-ssl false  \
-    && npm install -g npm@${NPM_VERSION}
-
-# Copy from build stage
-COPY --from=build /usr/src/app/yarn.lock /usr/src/app/package.json /usr/src/app/packages/backend/dist/skeleton.tar.gz ./
+# Copy repo skeleton first, to avoid unnecessary docker cache invalidation.
+# The skeleton contains the package.json of each package in the monorepo,
+# and along with yarn.lock and the root package.json, that's enough to run yarn install.
+COPY --chown=node:node yarn.lock package.json packages/backend/dist/skeleton.tar.gz ./
 RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 
-RUN yarn install --production --network-timeout 600000 && rm -rf "$(yarn cache dir)"
+RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
+    yarn install --frozen-lockfile --production --network-timeout 300000
 
-COPY --from=build /usr/src/app/packages/backend/dist/bundle.tar.gz .
+# Then copy the rest of the backend bundle, along with any other files we might want.
+COPY --chown=node:node packages/backend/dist/bundle.tar.gz app-config*.yaml ./
 RUN tar xzf bundle.tar.gz && rm bundle.tar.gz
 
-COPY app-config.yaml ./
-
-ENV PORT 7000
-
-CMD ["node", "packages/backend", "--config", "app-config.yaml"]
+CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml"]
+#CMD ["node", "packages/backend", "--config", "app-config.yaml"]
