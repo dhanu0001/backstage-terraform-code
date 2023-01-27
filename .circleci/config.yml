@@ -11,12 +11,13 @@ jobs:
       name: node/default
       tag: 16.19.0
     steps:
-    # - checkout
+    - checkout
     - node/install-packages:
         pkg-manager: yarn
-    - checkout
-    - run: |
-        node --version
+        yarn --version
+    # - checkout
+    # - run: |
+    #     node --version
     # - store_artifacts:
     #     path: /tmp/test-results
     #     destination: raw-test-output
