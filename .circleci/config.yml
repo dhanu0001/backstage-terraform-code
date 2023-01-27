@@ -16,7 +16,8 @@ jobs:
         node --version
         yarn --version
         docker --version
-        DOCKER_BUILDKIT=1 yarn build-image 
+        yarn
+        yarn build
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
