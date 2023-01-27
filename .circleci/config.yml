@@ -16,9 +16,10 @@ jobs:
         node --version
         yarn --version
         docker --version
-        yarn workspace backend build-image
     - node/install-packages:
         pkg-manager: yarn
+    - setup_remote_docker:
+        version: 20.10.14
     # - checkout
     # - run: |
     #     node --version
