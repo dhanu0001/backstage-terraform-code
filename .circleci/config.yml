@@ -18,6 +18,7 @@ jobs:
         node --version
         yarn --version
         docker --version
+        yarn
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
