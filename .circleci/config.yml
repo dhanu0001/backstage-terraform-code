@@ -12,12 +12,12 @@ jobs:
       tag: 16.19.0
     steps:
     - checkout
+    - setup_remote_docker:
+        version: 20.10.14
     - run: |
         node --version
         yarn --version
         docker --version
-    - setup_remote_docker:
-        version: 20.10.14
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
