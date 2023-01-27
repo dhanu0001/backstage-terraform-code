@@ -17,7 +17,7 @@ jobs:
     - checkout
     - run: |
         node --version
-        DOCKER_BUILDKIT=1 yarn build-image
+        # DOCKER_BUILDKIT=1 yarn build-image
     # - store_artifacts:
     #     path: /tmp/test-results
     #     destination: raw-test-output
