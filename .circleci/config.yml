@@ -14,6 +14,7 @@ jobs:
     - checkout
     - run: |
         node --version
+        yarn --version
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
