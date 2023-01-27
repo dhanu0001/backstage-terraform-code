@@ -20,6 +20,7 @@ jobs:
         docker --version
         # yarn build
         # # yarn workspace backend build-image
+        yarn install --frozen-lockfile
         DOCKER_BUILDKIT=1 yarn build-image
     - node/install-packages:
         pkg-manager: yarn
