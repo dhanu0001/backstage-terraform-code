@@ -12,6 +12,8 @@ jobs:
       tag: 16.19.0
     steps:
     - checkout
+    - run: |
+        node --version
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
