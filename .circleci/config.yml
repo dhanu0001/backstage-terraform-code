@@ -16,8 +16,7 @@ jobs:
         node --version
         yarn --version
         docker --version
-        yarn
-        yarn build
+        yarn workspace backend build-image
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
