@@ -12,6 +12,7 @@ jobs:
           name: Build container image
           command: |
             # Build the container image
+            ls -lrt
             docker build -t my-image .
 
       - run:
