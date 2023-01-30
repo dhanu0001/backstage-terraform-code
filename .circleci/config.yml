@@ -15,12 +15,12 @@ jobs:
     - setup_remote_docker:
         version: 20.10.14
     - run: |
-        node --version
-        yarn --version
-        docker --version
+        # node --version
+        # yarn --version
+        # docker --version
         # yarn build
-        # # yarn workspace backend build-image
-        yarn install --frozen-lockfile
+        # yarn install --frozen-lockfile
+        yarn
         DOCKER_BUILDKIT=1 yarn build-image
     - node/install-packages:
         pkg-manager: yarn
