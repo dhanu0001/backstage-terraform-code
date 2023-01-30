@@ -22,8 +22,8 @@ jobs:
             ls -lrt /home/circleci/project/
             cd /home/circleci/project/
             # docker build -t my-image .
-            yarn install
-            yarn tsc
+            # yarn install
+            # yarn tsc
             DOCKER_BUILDKIT=1 yarn build-image
 
       - run:
