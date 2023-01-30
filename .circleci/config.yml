@@ -22,7 +22,8 @@ jobs:
         # yarn install --frozen-lockfile
         ls -lrt
         # DOCKER_BUILDKIT=1 yarn workspace backend build-image
-        DOCKER_BUILDKIT=1 yarn build-image
+        yarn install
+        #DOCKER_BUILDKIT=1 yarn build-image
     - node/install-packages:
         pkg-manager: yarn
     # - checkout
