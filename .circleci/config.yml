@@ -43,4 +43,4 @@ workflows:
         dockerfile: packages/backend/Dockerfile
         path: .
         requires:
-          - test
+          - test 
