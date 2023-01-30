@@ -23,7 +23,6 @@ jobs:
             # docker build -t my-image .
             yarn install
             yarn tsc
-            ls -lrt /home/project/packages/backend/
             # DOCKER_BUILDKIT=1 yarn build-image
 
       - run:
