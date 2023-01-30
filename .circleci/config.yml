@@ -23,8 +23,8 @@ jobs:
             # docker build -t my-image .
             yarn install
             yarn tsc
-            ls -lrt packages/backend/
-            DOCKER_BUILDKIT=1 yarn build-image
+            ls -lrt /home/project/packages/backend/
+            # DOCKER_BUILDKIT=1 yarn build-image
 
       - run:
           name: Login to AWS ECR
