@@ -24,8 +24,7 @@ jobs:
             # docker build -t my-image .
             yarn install
             yarn tsc
-            yarn build
-            DOCKER_BUILDKIT=1 yarn build-image
+            DOCKER_BUILDKIT=1 yarn build-image --force
 
       - run:
           name: Login to AWS ECR
