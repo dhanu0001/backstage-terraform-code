@@ -1,9 +1,15 @@
 version: 2.1
+orbs:
+  # https://circleci.com/developer/orbs/orb/circleci/node
+  node: circleci/node@5.0.3
+  
+  # https://circleci.com/developer/orbs/orb/circleci/aws-ecr
+  aws-ecr: circleci/aws-ecr@8.2.1
 
 jobs:
   build:
     docker:
-      - image: circleci/node:16.19.0
+      - image: circleci/node:12.18.3
     steps:
       - checkout
       - setup_remote_docker:
