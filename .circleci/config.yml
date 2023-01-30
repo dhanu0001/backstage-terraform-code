@@ -22,6 +22,7 @@ jobs:
             ls -lrt
             docker build -t my-image .
             yarn install
+            yarn tsc
             #DOCKER_BUILDKIT=1 yarn build-image
 
       - run:
