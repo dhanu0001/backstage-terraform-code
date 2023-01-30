@@ -27,5 +27,5 @@ jobs:
             # Tag the container image and push it to ECR
             REPOSITORY_URL=$(aws ecr describe-repositories --repository-names my-repository --region us-east-1 | jq -r '.repositories[0].repositoryUri')
             docker tag my-image:latest $REPOSITORY_URL:latest
-            docker push $REPOSITORY_URL:latest 
+            docker push $REPOSITORY_URL:latest
 
